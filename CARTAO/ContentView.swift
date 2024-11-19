@@ -10,23 +10,30 @@ import SwiftUI
 struct ContentView: View {
     @State private var rotationAngle: Double = 0
     @State private var isFlipped = false
-    
+    @StateObject private var motionManager = MotionManager()
+
     var body: some View {
         VStack(spacing: 40) {
-            ZStack{
+            ZStack {
                 RoundedRectangle(cornerRadius: 20)
-                    .fill(LinearGradient (
-                        gradient: Gradient(colors: [Color.gray.opacity(0.2), Color.black]),
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    ))
+                    .fill(
+                        LinearGradient(
+                            gradient: Gradient(colors: [
+                                Color.black,
+                                Color.gray.opacity(0.6),
+                                Color.black
+                            ]),
+                            startPoint: .init(x: 0.5 + motionManager.xRotation / 30, y: 0.5),
+                            endPoint: .init(x: 1.5 + motionManager.xRotation / 30, y: 0.5)
+                        )
+                    )
                     .frame(width: 350, height: 200)
-                    .shadow(color: Color.black.opacity(0.3), radius: 10, x: 0, y: 10)
-                
+                    .shadow(color: Color.black.opacity(0.4), radius: 10, x: 0, y: 10)
+
                 ZStack {
                     FrontOfCard()
                         .opacity(isFlipped ? 0 : 1)
-                    
+
                     BackOfCard()
                         .opacity(isFlipped ? 1 : 0)
                         .rotation3DEffect(
@@ -40,7 +47,7 @@ struct ContentView: View {
                 .degrees(rotationAngle),
                 axis: (x: 0, y: 1, z: 0)
             )
-            
+
             Button(action: {
                 withAnimation(.easeInOut(duration: 1.0)) {
                     isFlipped.toggle()
@@ -55,7 +62,6 @@ struct ContentView: View {
                     .background(Color.green)
                     .cornerRadius(15)
             }
-            
         }
         .padding()
     }
